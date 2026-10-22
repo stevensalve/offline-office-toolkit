@@ -1,0 +1,47 @@
+/* Sheet Cleaner - tool-specific styles. */
+fieldset {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+legend {
+  padding: 0 0.4rem;
+  font-weight: 700;
+}
+
+fieldset.quick label.inline {
+  display: flex;
+  margin-bottom: 0.3rem;
+}
+
+fieldset button {
+  margin-top: 0.5rem;
+}
+
+.loader-meta {
+  margin-top: 0.75rem;
+  align-items: end;
+}
+
+.log {
+  margin: 0.75rem 0 0;
+  padding-left: 1.4rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 1rem 0;
+}
+
+#lookup-cols label {
+  margin: 0;
+}
+
+td.empty {
+  color: var(--muted);
+}

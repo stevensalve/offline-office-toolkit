@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>File Converter - CSV, Excel, JSON and text to PDF (offline)</title>
+    <meta
+      name="description"
+      content="Convert between CSV, Excel and JSON, or turn text into a PDF. Runs in your browser; files never leave your computer."
+    />
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="site">
+        <div>
+          <h1>File Converter</h1>
+          <p>CSV, Excel and JSON in any direction - plus text to PDF.</p>
+        </div>
+        <span class="badge">Works offline - files never leave this device</span>
+      </header>
+
+      <div class="tabs" role="tablist" id="tabs" aria-label="Converters">
+        <button role="tab" id="tab-data" aria-controls="panel-data" aria-selected="true">CSV / Excel / JSON</button>
+        <button role="tab" id="tab-pdf" aria-controls="panel-pdf">Text to PDF</button>
+      </div>
+
+      <section id="panel-data" role="tabpanel" aria-labelledby="tab-data" class="card">
+        <h2>Convert a data file</h2>
+        <label class="dropzone" id="data-drop">
+          Drop a .csv, .tsv, .json, .xlsx or .xls file here, or click to choose
+          <input type="file" id="data-input" accept=".csv,.tsv,.txt,.json,.xlsx,.xls,.xlsm" />
+        </label>
+        <p class="fileinfo hint" id="data-info" aria-live="polite"></p>
+
+        <div class="grid">
+          <div id="sheet-box" hidden>
+            <label for="data-sheet">Sheet (Excel files)</label>
+            <select id="data-sheet"></select>
+          </div>
+          <div>
+            <label for="data-target">Convert to</label>
+            <select id="data-target">
+              <option value="csv">CSV (.csv)</option>
+              <option value="tsv">Tab-separated (.tsv)</option>
+              <option value="xlsx">Excel (.xlsx)</option>
+              <option value="json">JSON (.json)</option>
+            </select>
+          </div>
+          <div id="opt-csv">
+            <label for="csv-delim">CSV separator</label>
+            <select id="csv-delim">
+              <option value=",">Comma (,)</option>
+              <option value=";">Semicolon (;)</option>
+              <option value="|">Pipe (|)</option>
+            </select>
+            <label class="inline"><input type="checkbox" id="csv-protect" /> Protect against spreadsheet formulas</label>
+          </div>
+          <div id="opt-json" hidden>
+            <label class="inline"><input type="checkbox" id="json-infer" checked /> Turn "42" and "true" into numbers/booleans</label>
+            <label class="inline"><input type="checkbox" id="json-pretty" checked /> Pretty print</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <button class="primary" id="data-run" disabled>Convert and download</button>
+        </div>
+        <p class="status" id="data-status" role="status"></p>
+        <h3>Preview</h3>
+        <pre class="preview" id="data-preview" tabindex="0" aria-label="Preview of converted output">Choose a file to see a preview.</pre>
+      </section>
+
+      <section id="panel-pdf" role="tabpanel" aria-labelledby="tab-pdf" class="card" hidden>
+        <h2>Text to PDF</h2>
+        <label for="pdf-text">Paste text, or load a .txt file</label>
+        <textarea id="pdf-text" rows="10" spellcheck="false"></textarea>
+        <label class="dropzone" id="pdf-drop">
+          Drop a .txt file here, or click to choose
+          <input type="file" id="pdf-input" accept=".txt,.md,.log,text/plain" />
+        </label>
+        <div class="grid">
+          <div>
+            <label for="pdf-font">Font</label>
+            <select id="pdf-font">
+              <option value="helvetica">Sans-serif</option>
+              <option value="times">Serif</option>
+              <option value="courier">Monospace</option>
+            </select>
+          </div>
+          <div>
+            <label for="pdf-size">Font size</label>
+            <input type="number" id="pdf-size" value="11" min="6" max="36" />
+          </div>
+          <div>
+            <label for="pdf-page">Page</label>
+            <select id="pdf-page">
+              <option value="a4">A4</option>
+              <option value="letter">US Letter</option>
+            </select>
+          </div>
+        </div>
+        <p class="hint">
+          Standard PDF fonts cover English and Western European letters. Other scripts show as "?" and the rupee sign is written as "Rs.".
+        </p>
+        <div class="row">
+          <button class="primary" id="pdf-run">Create PDF</button>
+        </div>
+        <p class="status" id="pdf-status" role="status"></p>
+      </section>
+
+      <footer class="site">
+        <a href="../../index.html">All tools</a> - MIT licensed - <a href="vendor/README.md">SheetJS and pdf-lib</a>
+      </footer>
+    </main>
+
+    <script src="vendor/xlsx.full.min.js"></script>
+    <script src="vendor/pdf-lib.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

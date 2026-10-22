@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>QR &amp; Barcode Maker - Wi-Fi, contact, link, EAN, Code 128 (offline)</title>
+    <meta
+      name="description"
+      content="Make QR codes (links, Wi-Fi, contacts, e-mail, SMS) and barcodes. Runs in your browser; nothing is uploaded."
+    />
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="site">
+        <div>
+          <h1>QR &amp; Barcode Maker</h1>
+          <p>Free QR codes with no tracking, no expiry, no sign-up.</p>
+        </div>
+        <span class="badge">Works offline - nothing is uploaded</span>
+      </header>
+
+      <div class="tabs" role="tablist" id="tabs" aria-label="Code type">
+        <button role="tab" id="tab-qr" aria-controls="panel-qr" aria-selected="true">QR code</button>
+        <button role="tab" id="tab-bar" aria-controls="panel-bar">Barcode</button>
+      </div>
+
+      <section id="panel-qr" role="tabpanel" aria-labelledby="tab-qr" class="two-col">
+        <div class="card stack">
+          <div>
+            <label for="qr-type">What should the QR code do?</label>
+            <select id="qr-type">
+              <option value="url">Open a website</option>
+              <option value="text">Show text</option>
+              <option value="wifi">Join Wi-Fi</option>
+              <option value="vcard">Save a contact</option>
+              <option value="email">Write an e-mail</option>
+              <option value="sms">Send an SMS</option>
+              <option value="tel">Call a number</option>
+            </select>
+          </div>
+
+          <div class="qr-fields" data-type="url">
+            <label for="f-url">Web address</label>
+            <input type="text" id="f-url" placeholder="example.com/menu" />
+          </div>
+          <div class="qr-fields" data-type="text" hidden>
+            <label for="f-text">Text</label>
+            <textarea id="f-text" rows="4"></textarea>
+          </div>
+          <div class="qr-fields stack" data-type="wifi" hidden>
+            <div><label for="f-ssid">Network name (SSID)</label><input type="text" id="f-ssid" /></div>
+            <div>
+              <label for="f-wifi-sec">Security</label>
+              <select id="f-wifi-sec">
+                <option value="WPA">WPA/WPA2/WPA3</option>
+                <option value="WEP">WEP</option>
+                <option value="nopass">No password</option>
+              </select>
+            </div>
+            <div><label for="f-wifi-pass">Password</label><input type="text" id="f-wifi-pass" autocomplete="off" /></div>
+            <label class="inline"><input type="checkbox" id="f-wifi-hidden" /> Hidden network</label>
+          </div>
+          <div class="qr-fields stack" data-type="vcard" hidden>
+            <div class="grid">
+              <div><label for="f-vc-first">First name</label><input type="text" id="f-vc-first" /></div>
+              <div><label for="f-vc-last">Last name</label><input type="text" id="f-vc-last" /></div>
+            </div>
+            <div><label for="f-vc-org">Company</label><input type="text" id="f-vc-org" /></div>
+            <div><label for="f-vc-title">Job title</label><input type="text" id="f-vc-title" /></div>
+            <div><label for="f-vc-phone">Phone</label><input type="tel" id="f-vc-phone" /></div>
+            <div><label for="f-vc-email">E-mail</label><input type="email" id="f-vc-email" /></div>
+            <div><label for="f-vc-url">Website</label><input type="text" id="f-vc-url" /></div>
+          </div>
+          <div class="qr-fields stack" data-type="email" hidden>
+            <div><label for="f-em-to">To</label><input type="email" id="f-em-to" /></div>
+            <div><label for="f-em-subject">Subject</label><input type="text" id="f-em-subject" /></div>
+            <div><label for="f-em-body">Message</label><textarea id="f-em-body" rows="3"></textarea></div>
+          </div>
+          <div class="qr-fields stack" data-type="sms" hidden>
+            <div><label for="f-sms-num">Phone number</label><input type="tel" id="f-sms-num" /></div>
+            <div><label for="f-sms-msg">Message</label><textarea id="f-sms-msg" rows="3"></textarea></div>
+          </div>
+          <div class="qr-fields" data-type="tel" hidden>
+            <label for="f-tel-num">Phone number</label>
+            <input type="tel" id="f-tel-num" />
+          </div>
+
+          <details>
+            <summary>Appearance</summary>
+            <div class="grid stack">
+              <div>
+                <label for="qr-ecc">Error correction</label>
+                <select id="qr-ecc">
+                  <option value="L">Low (smallest code)</option>
+                  <option value="M" selected>Medium</option>
+                  <option value="Q">Quartile</option>
+                  <option value="H">High (survives damage)</option>
+                </select>
+              </div>
+              <div>
+                <label for="qr-size">Size: <output id="qr-size-out">320</output> px</label>
+                <input type="range" id="qr-size" min="128" max="1024" step="32" value="320" />
+              </div>
+              <div><label for="qr-fg">Code colour</label><input type="color" id="qr-fg" value="#000000" /></div>
+              <div><label for="qr-bg">Background</label><input type="color" id="qr-bg" value="#ffffff" /></div>
+            </div>
+          </details>
+        </div>
+
+        <div class="card preview-card">
+          <h2>Preview</h2>
+          <div class="preview-box"><img id="qr-img" alt="Generated QR code" width="320" height="320" hidden /></div>
+          <p class="status" id="qr-status" role="status"></p>
+          <div class="row">
+            <button class="primary" id="qr-png" disabled>Download PNG</button>
+            <button id="qr-svg" disabled>Download SVG</button>
+          </div>
+          <p class="hint">Always test-scan a code with a phone before printing.</p>
+        </div>
+      </section>
+
+      <section id="panel-bar" role="tabpanel" aria-labelledby="tab-bar" class="two-col" hidden>
+        <div class="card stack">
+          <div>
+            <label for="bar-format">Barcode type</label>
+            <select id="bar-format"></select>
+          </div>
+          <div>
+            <label for="bar-value">Value</label>
+            <input type="text" id="bar-value" value="Hello-123" autocomplete="off" />
+            <p class="hint" id="bar-hint"></p>
+          </div>
+          <div class="grid">
+            <div>
+              <label for="bar-width">Bar width: <output id="bar-width-out">2</output></label>
+              <input type="range" id="bar-width" min="1" max="6" value="2" />
+            </div>
+            <div>
+              <label for="bar-height">Height: <output id="bar-height-out">100</output> px</label>
+              <input type="range" id="bar-height" min="40" max="300" step="10" value="100" />
+            </div>
+          </div>
+          <label class="inline"><input type="checkbox" id="bar-text" checked /> Show the number below the bars</label>
+        </div>
+
+        <div class="card preview-card">
+          <h2>Preview</h2>
+          <div class="preview-box"><svg id="bar-svg" role="img" aria-label="Generated barcode"></svg></div>
+          <p class="status" id="bar-status" role="status"></p>
+          <div class="row">
+            <button class="primary" id="bar-png" disabled>Download PNG</button>
+            <button id="bar-svg-dl" disabled>Download SVG</button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site">
+        <a href="../../index.html">All tools</a> - MIT licensed - <a href="vendor/README.md">qrcode-generator and JsBarcode</a>
+      </footer>
+    </main>
+
+    <script src="vendor/qrcode.js"></script>
+    <script src="vendor/qrcode_UTF8.js"></script>
+    <script src="vendor/JsBarcode.all.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

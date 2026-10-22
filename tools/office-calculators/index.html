@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>Office Calculators - percentage, EMI, GST, dates, units, interest (offline)</title>
+    <meta
+      name="description"
+      content="Percentage, loan EMI, GST/VAT, date difference, unit converter, interest and margin calculators. Runs in your browser."
+    />
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="site">
+        <div>
+          <h1>Office Calculators</h1>
+          <p>The everyday maths of office work, in one place.</p>
+        </div>
+        <span class="badge">Works offline - nothing is uploaded</span>
+      </header>
+
+      <div class="card row settings">
+        <div>
+          <label for="set-locale">Number format</label>
+          <select id="set-locale">
+            <option value="en-IN">Indian (12,34,567.00)</option>
+            <option value="en-US">US (1,234,567.00)</option>
+            <option value="en-GB">UK (1,234,567.00)</option>
+            <option value="de-DE">European (1.234.567,00)</option>
+          </select>
+        </div>
+        <div>
+          <label for="set-currency">Currency symbol</label>
+          <select id="set-currency">
+            <option value="&#8377;">&#8377; Rupee</option>
+            <option value="$">$ Dollar</option>
+            <option value="&#8364;">&#8364; Euro</option>
+            <option value="&#163;">&#163; Pound</option>
+            <option value="">None</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist" id="tabs" aria-label="Calculators">
+        <button role="tab" id="tab-pct" aria-controls="panel-pct" aria-selected="true">Percentage</button>
+        <button role="tab" id="tab-emi" aria-controls="panel-emi">Loan EMI</button>
+        <button role="tab" id="tab-tax" aria-controls="panel-tax">GST / VAT</button>
+        <button role="tab" id="tab-date" aria-controls="panel-date">Dates</button>
+        <button role="tab" id="tab-unit" aria-controls="panel-unit">Units</button>
+        <button role="tab" id="tab-int" aria-controls="panel-int">Interest</button>
+        <button role="tab" id="tab-disc" aria-controls="panel-disc">Discount &amp; margin</button>
+      </div>
+
+      <section id="panel-pct" role="tabpanel" aria-labelledby="tab-pct" class="card calc">
+        <h2>Percentage</h2>
+        <div class="grid">
+          <div>
+            <label for="pct-mode">I want to know</label>
+            <select id="pct-mode">
+              <option value="of">What is X% of Y?</option>
+              <option value="what">X is what % of Y?</option>
+              <option value="change">% change from X to Y</option>
+              <option value="add">Y plus X%</option>
+              <option value="sub">Y minus X%</option>
+            </select>
+          </div>
+          <div><label for="pct-x" id="pct-x-label">X</label><input type="number" id="pct-x" step="any" value="15" /></div>
+          <div><label for="pct-y" id="pct-y-label">Y</label><input type="number" id="pct-y" step="any" value="2000" /></div>
+        </div>
+        <dl class="result" aria-live="polite"></dl>
+      </section>
+
+      <section id="panel-emi" role="tabpanel" aria-labelledby="tab-emi" class="card calc" hidden>
+        <h2>Loan EMI</h2>
+        <div class="grid">
+          <div><label for="emi-p">Loan amount</label><input type="number" id="emi-p" min="0" step="any" value="1000000" /></div>
+          <div><label for="emi-r">Interest rate (% per year)</label><input type="number" id="emi-r" min="0" step="any" value="8.5" /></div>
+          <div>
+            <label for="emi-n">Tenure</label>
+            <div class="row">
+              <input type="number" id="emi-n" min="1" step="1" value="20" />
+              <select id="emi-unit" aria-label="Tenure unit">
+                <option value="12">years</option>
+                <option value="1">months</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <dl class="result" aria-live="polite"></dl>
+        <div class="row">
+          <button id="emi-toggle" type="button">Show full schedule</button>
+          <button id="emi-csv" type="button">Download schedule (CSV)</button>
+        </div>
+        <div class="table-wrap" id="emi-table" hidden></div>
+      </section>
+
+      <section id="panel-tax" role="tabpanel" aria-labelledby="tab-tax" class="card calc" hidden>
+        <h2>GST / VAT</h2>
+        <div class="grid">
+          <div>
+            <label for="tax-mode">Direction</label>
+            <select id="tax-mode">
+              <option value="add">Add tax to a price</option>
+              <option value="remove">Remove tax from a price</option>
+            </select>
+          </div>
+          <div>
+            <label for="tax-amount" id="tax-amount-label">Price (before tax)</label
+            ><input type="number" id="tax-amount" min="0" step="any" value="1000" />
+          </div>
+          <div>
+            <label for="tax-rate">Tax rate (%)</label>
+            <input type="number" id="tax-rate" min="0" step="any" value="18" list="tax-presets" />
+            <datalist id="tax-presets">
+              <option value="5"></option>
+              <option value="12"></option>
+              <option value="18"></option>
+              <option value="28"></option>
+            </datalist>
+          </div>
+        </div>
+        <dl class="result" aria-live="polite"></dl>
+      </section>
+
+      <section id="panel-date" role="tabpanel" aria-labelledby="tab-date" class="card calc" hidden>
+        <h2>Dates</h2>
+        <fieldset>
+          <legend>Days between two dates</legend>
+          <div class="grid">
+            <div><label for="d-from">From</label><input type="date" id="d-from" /></div>
+            <div><label for="d-to">To</label><input type="date" id="d-to" /></div>
+          </div>
+          <dl class="result" id="d-result" aria-live="polite"></dl>
+        </fieldset>
+        <fieldset>
+          <legend>Add or subtract days</legend>
+          <div class="grid">
+            <div><label for="a-from">Start date</label><input type="date" id="a-from" /></div>
+            <div><label for="a-days">Days (negative to go back)</label><input type="number" id="a-days" step="1" value="30" /></div>
+            <div>
+              <label class="inline"><input type="checkbox" id="a-business" /> Working days only (skip Sat/Sun)</label>
+            </div>
+          </div>
+          <dl class="result" id="a-result" aria-live="polite"></dl>
+        </fieldset>
+        <p class="hint">Public holidays are not included in working-day counts.</p>
+      </section>
+
+      <section id="panel-unit" role="tabpanel" aria-labelledby="tab-unit" class="card calc" hidden>
+        <h2>Unit converter</h2>
+        <div class="grid">
+          <div>
+            <label for="u-cat">Category</label
+            ><select id="u-cat"></select>
+          </div>
+          <div><label for="u-val">Value</label><input type="number" id="u-val" step="any" value="1" /></div>
+          <div>
+            <label for="u-from">From</label
+            ><select id="u-from"></select>
+          </div>
+          <div>
+            <label for="u-to">To</label
+            ><select id="u-to"></select>
+          </div>
+        </div>
+        <dl class="result" aria-live="polite"></dl>
+      </section>
+
+      <section id="panel-int" role="tabpanel" aria-labelledby="tab-int" class="card calc" hidden>
+        <h2>Simple and compound interest</h2>
+        <div class="grid">
+          <div><label for="i-p">Amount</label><input type="number" id="i-p" min="0" step="any" value="100000" /></div>
+          <div><label for="i-r">Rate (% per year)</label><input type="number" id="i-r" min="0" step="any" value="7" /></div>
+          <div><label for="i-t">Years</label><input type="number" id="i-t" min="0" step="any" value="5" /></div>
+          <div>
+            <label for="i-n">Compounded</label>
+            <select id="i-n">
+              <option value="1">Yearly</option>
+              <option value="4">Quarterly</option>
+              <option value="12">Monthly</option>
+              <option value="365">Daily</option>
+            </select>
+          </div>
+        </div>
+        <dl class="result" aria-live="polite"></dl>
+      </section>
+
+      <section id="panel-disc" role="tabpanel" aria-labelledby="tab-disc" class="card calc" hidden>
+        <h2>Discount &amp; margin</h2>
+        <fieldset>
+          <legend>Discount</legend>
+          <div class="grid">
+            <div><label for="ds-price">Price</label><input type="number" id="ds-price" min="0" step="any" value="999" /></div>
+            <div><label for="ds-off">Discount (%)</label><input type="number" id="ds-off" min="0" max="100" step="any" value="15" /></div>
+          </div>
+          <dl class="result" id="ds-result" aria-live="polite"></dl>
+        </fieldset>
+        <fieldset>
+          <legend>Profit margin</legend>
+          <div class="grid">
+            <div><label for="mg-cost">Cost</label><input type="number" id="mg-cost" min="0" step="any" value="80" /></div>
+            <div><label for="mg-sell">Selling price</label><input type="number" id="mg-sell" min="0" step="any" value="100" /></div>
+            <div>
+              <label for="mg-target">Target margin (%) - optional</label
+              ><input type="number" id="mg-target" step="any" placeholder="e.g. 30" />
+            </div>
+          </div>
+          <dl class="result" id="mg-result" aria-live="polite"></dl>
+        </fieldset>
+        <p class="hint">Margin = profit / selling price. Markup = profit / cost.</p>
+      </section>
+
+      <footer class="site">
+        <a href="../../index.html">All tools</a> - MIT licensed - no third-party libraries. Results are for guidance, not financial advice.
+      </footer>
+    </main>
+
+    <script src="js/common.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

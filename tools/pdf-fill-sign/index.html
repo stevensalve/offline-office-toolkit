@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; worker-src 'self' blob:; connect-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>PDF Fill &amp; Sign - fill forms, add text, tick boxes and sign (offline)</title>
+    <meta
+      name="description"
+      content="Fill in PDF forms, type on any PDF, add a signature and save. Runs in your browser; documents never leave your computer."
+    />
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="site">
+        <div>
+          <h1>PDF Fill &amp; Sign</h1>
+          <p>Fill forms, type anywhere, tick boxes, add your signature.</p>
+        </div>
+        <span class="badge">Works offline - your document never leaves this device</span>
+      </header>
+
+      <section class="card" id="open-card">
+        <label class="dropzone" id="drop">
+          Drop a PDF here or click to choose
+          <input type="file" id="file-input" accept="application/pdf,.pdf" />
+        </label>
+        <p class="status" id="status" role="status"></p>
+      </section>
+
+      <section id="editor" hidden>
+        <div class="card toolbar" role="toolbar" aria-label="Editing tools">
+          <div class="row tools" role="group" aria-label="Add to page">
+            <button type="button" data-tool="select" aria-pressed="true" title="Select and move items">Select</button>
+            <button type="button" data-tool="text" aria-pressed="false" title="Click on the page to type text">Text</button>
+            <button type="button" data-tool="date" aria-pressed="false" title="Click on the page to add a date">Date</button>
+            <button type="button" data-tool="check" aria-pressed="false" title="Click on the page to add a tick">Tick &#10003;</button>
+            <button type="button" data-tool="signature" aria-pressed="false" title="Click on the page to place your signature">
+              Signature
+            </button>
+          </div>
+          <div class="row" role="group" aria-label="Selected item">
+            <button type="button" id="smaller" disabled>Smaller</button>
+            <button type="button" id="larger" disabled>Larger</button>
+            <button type="button" id="delete" class="danger" disabled>Delete item</button>
+          </div>
+          <div class="row" role="group" aria-label="Page view">
+            <button type="button" id="prev" aria-label="Previous page">&larr;</button>
+            <span id="page-label" aria-live="polite">Page 1 of 1</span>
+            <button type="button" id="next" aria-label="Next page">&rarr;</button>
+            <label class="visually-hidden" for="zoom">Zoom</label>
+            <select id="zoom">
+              <option value="0.75">75%</option>
+              <option value="1">100%</option>
+              <option value="1.25" selected>125%</option>
+              <option value="1.5">150%</option>
+              <option value="2">200%</option>
+            </select>
+          </div>
+          <div class="row">
+            <label for="date-format" class="inline">Date style</label>
+            <select id="date-format">
+              <option value="dd/mm/yyyy">31/12/2026</option>
+              <option value="mm/dd/yyyy">12/31/2026</option>
+              <option value="yyyy-mm-dd">2026-12-31</option>
+              <option value="d mmm yyyy">31 Dec 2026</option>
+            </select>
+          </div>
+        </div>
+        <p class="hint" id="tool-hint">
+          Choose a tool above, then click on the page where it should go. Drag the &#10021; handle to move an item.
+        </p>
+
+        <div class="viewer" id="viewer">
+          <div class="page-stack" id="page-stack">
+            <canvas id="page-canvas"></canvas>
+            <div class="overlay" id="overlay"></div>
+          </div>
+        </div>
+
+        <div class="card" id="sig-panel" hidden>
+          <h2>Create your signature</h2>
+          <div class="tabs" role="tablist" id="sig-tabs" aria-label="Signature method">
+            <button role="tab" id="sigtab-draw" aria-controls="sig-draw" aria-selected="true">Draw</button>
+            <button role="tab" id="sigtab-type" aria-controls="sig-type">Type</button>
+          </div>
+          <div id="sig-draw" role="tabpanel" aria-labelledby="sigtab-draw">
+            <canvas id="sig-pad" width="560" height="180" aria-label="Signature drawing area. Use mouse, finger or pen."></canvas>
+            <p class="hint">Sign inside the box with your mouse, finger or stylus.</p>
+          </div>
+          <div id="sig-type" role="tabpanel" aria-labelledby="sigtab-type" hidden>
+            <label for="sig-text">Your name</label>
+            <input type="text" id="sig-text" maxlength="40" />
+          </div>
+          <div class="row">
+            <label class="inline" for="sig-color">Ink</label>
+            <select id="sig-color">
+              <option value="#111111">Black</option>
+              <option value="#0b3d91">Blue</option>
+            </select>
+            <button type="button" id="sig-clear">Clear</button>
+            <button type="button" class="primary" id="sig-use">Use this signature</button>
+            <button type="button" id="sig-cancel">Cancel</button>
+          </div>
+          <p class="status" id="sig-status" role="status"></p>
+        </div>
+
+        <div class="card" id="fields-card" hidden>
+          <h2>Form fields in this PDF</h2>
+          <p class="hint">
+            These fill the PDF's own form boxes. They appear in the saved file (the preview above does not show typed values).
+          </p>
+          <div class="grid" id="fields"></div>
+        </div>
+
+        <div class="card">
+          <div class="row">
+            <button class="primary" id="save">Save PDF</button>
+            <label class="inline"><input type="checkbox" id="flatten" /> Lock form fields after filling (cannot be edited later)</label>
+          </div>
+          <p class="status" id="save-status" role="status"></p>
+          <p class="hint">
+            A signature image is not a certified digital signature. Check whether the recipient requires a certificate-based signature.
+          </p>
+        </div>
+      </section>
+
+      <footer class="site">
+        <a href="../../index.html">All tools</a> - MIT licensed - powered by <a href="vendor/README.md">pdf-lib and PDF.js</a>
+      </footer>
+    </main>
+
+    <script src="vendor/pdf-lib.min.js"></script>
+    <script src="vendor/pdf.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

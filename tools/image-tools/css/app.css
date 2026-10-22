@@ -1,0 +1,17 @@
+/* Image Tools - tool-specific styles. */
+.thumb {
+  width: 3rem;
+  height: 3rem;
+  object-fit: cover;
+  border-radius: 6px;
+  background: var(--border);
+}
+
+h3 {
+  margin: 1rem 0 0.5rem;
+  font-size: 1rem;
+}
+
+input[type='range'] {
+  width: 100%;
+}

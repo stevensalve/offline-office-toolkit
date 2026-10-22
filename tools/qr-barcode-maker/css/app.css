@@ -1,0 +1,41 @@
+/* QR & Barcode Maker - tool-specific styles. */
+.two-col {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  align-items: start;
+}
+
+.two-col[hidden] {
+  display: none;
+}
+
+.preview-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 12rem;
+  padding: 1rem;
+  overflow: auto;
+  background: repeating-conic-gradient(var(--border) 0% 25%, var(--surface) 0% 50%) 50% / 16px 16px;
+  border-radius: 8px;
+}
+
+.preview-box img,
+.preview-box svg {
+  max-width: 100%;
+  height: auto;
+}
+
+details {
+  margin-top: 0.5rem;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+details .stack {
+  margin-top: 0.75rem;
+}

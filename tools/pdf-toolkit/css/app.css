@@ -1,0 +1,14 @@
+/* PDF Toolkit - tool-specific styles. Shared look & feel is in theme.css. */
+.fileinfo {
+  margin: 0.5rem 0;
+  color: var(--muted);
+}
+
+.files .row-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.files button {
+  padding: 0.2rem 0.5rem;
+}

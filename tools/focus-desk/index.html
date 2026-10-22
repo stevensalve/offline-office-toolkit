@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>Focus Desk - to-do list, board, focus timer and notes (offline)</title>
+    <meta name="description" content="A private to-do list, Kanban board, Pomodoro focus timer and notes. Data stays in your browser." />
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="site">
+        <div>
+          <h1>Focus Desk</h1>
+          <p>Tasks, board, focus timer and notes - saved only in this browser.</p>
+        </div>
+        <span class="badge">Works offline - nothing is uploaded</span>
+      </header>
+
+      <div class="tabs" role="tablist" id="tabs" aria-label="Focus Desk sections">
+        <button role="tab" id="tab-tasks" aria-controls="panel-tasks" aria-selected="true">Tasks</button>
+        <button role="tab" id="tab-board" aria-controls="panel-board">Board</button>
+        <button role="tab" id="tab-timer" aria-controls="panel-timer">Focus timer</button>
+        <button role="tab" id="tab-notes" aria-controls="panel-notes">Notes</button>
+      </div>
+
+      <section id="panel-tasks" role="tabpanel" aria-labelledby="tab-tasks">
+        <form class="card" id="task-form" autocomplete="off">
+          <h2>Add a task</h2>
+          <div class="grid">
+            <div class="wide">
+              <label for="task-title">What needs to be done?</label><input type="text" id="task-title" maxlength="200" />
+            </div>
+            <div>
+              <label for="task-priority">Priority</label>
+              <select id="task-priority">
+                <option value="high">High</option>
+                <option value="medium" selected>Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+            <div><label for="task-due">Due date</label><input type="date" id="task-due" /></div>
+          </div>
+          <div class="row"><button class="primary" type="submit">Add task</button></div>
+          <p class="status" id="task-status" role="status"></p>
+        </form>
+
+        <div class="card">
+          <div class="row spread">
+            <h2>Your tasks</h2>
+            <div class="row">
+              <label class="inline" for="task-filter">Show</label>
+              <select id="task-filter">
+                <option value="open">Open</option>
+                <option value="all">All</option>
+                <option value="done">Done</option>
+              </select>
+              <label class="inline" for="task-sort">Sort by</label>
+              <select id="task-sort">
+                <option value="due">Due date</option>
+                <option value="priority">Priority</option>
+                <option value="created">Added</option>
+              </select>
+            </div>
+          </div>
+          <ul class="tasks" id="task-list" aria-label="Tasks"></ul>
+          <p class="hint" id="task-empty" hidden>Nothing here yet.</p>
+        </div>
+      </section>
+
+      <section id="panel-board" role="tabpanel" aria-labelledby="tab-board" hidden>
+        <p class="hint">Drag cards between columns, or use the arrow buttons.</p>
+        <div class="board" id="board"></div>
+      </section>
+
+      <section id="panel-timer" role="tabpanel" aria-labelledby="tab-timer" class="card" hidden>
+        <div class="timer">
+          <p class="phase" id="timer-phase" aria-live="polite">Focus</p>
+          <p class="clock" id="timer-clock" role="timer" aria-label="Time remaining">25:00</p>
+          <p class="hint" id="timer-round">Round 1 of 4</p>
+          <div class="row center">
+            <button class="primary" id="timer-toggle">Start</button>
+            <button id="timer-skip">Skip</button>
+            <button id="timer-reset">Reset</button>
+          </div>
+          <p class="status" id="timer-status" role="status"></p>
+        </div>
+        <h2>Today</h2>
+        <p id="timer-stats"></p>
+        <details>
+          <summary>Timer settings</summary>
+          <div class="grid">
+            <div><label for="set-work">Focus (minutes)</label><input type="number" id="set-work" min="1" max="120" /></div>
+            <div><label for="set-short">Short break</label><input type="number" id="set-short" min="1" max="60" /></div>
+            <div><label for="set-long">Long break</label><input type="number" id="set-long" min="1" max="120" /></div>
+            <div><label for="set-rounds">Rounds before long break</label><input type="number" id="set-rounds" min="2" max="12" /></div>
+          </div>
+          <label class="inline"><input type="checkbox" id="set-sound" checked /> Play a sound when a session ends</label>
+          <div class="row"><button id="set-apply">Save settings</button></div>
+        </details>
+      </section>
+
+      <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes" hidden>
+        <div class="notes-layout">
+          <div class="card">
+            <div class="row"><button class="primary" id="note-new">New note</button></div>
+            <ul class="notes-list" id="notes-list" aria-label="Your notes"></ul>
+          </div>
+          <div class="card stack" id="note-editor" hidden>
+            <div><label for="note-title">Title</label><input type="text" id="note-title" maxlength="120" /></div>
+            <div><label for="note-body">Note</label><textarea id="note-body" rows="14" maxlength="20000"></textarea></div>
+            <div class="row"><button class="danger" id="note-delete">Delete this note</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="h-data">
+        <h2 id="h-data">Your data</h2>
+        <p class="hint">Everything is stored in this browser only. Clearing browser data erases it, so save a backup file now and then.</p>
+        <div class="row">
+          <button id="data-export">Save backup file</button>
+          <label class="button" for="data-import">Restore from backup</label>
+          <input type="file" id="data-import" accept=".json,application/json" class="visually-hidden" />
+          <button id="data-erase" class="danger">Erase everything</button>
+        </div>
+        <p class="status" id="data-status" role="status"></p>
+      </section>
+
+      <footer class="site"><a href="../../index.html">All tools</a> - MIT licensed - no third-party libraries</footer>
+    </main>
+
+    <script src="js/common.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,187 @@
+/* Focus Desk - tool-specific styles. */
+.grid .wide {
+  grid-column: span 2;
+}
+
+.row.spread {
+  justify-content: space-between;
+}
+
+.row.center {
+  justify-content: center;
+}
+
+ul.tasks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul.tasks li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+ul.tasks li.done .title {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.title {
+  flex: 1 1 14rem;
+  overflow-wrap: anywhere;
+}
+
+.title-input {
+  flex: 1 1 14rem;
+}
+
+.pill {
+  padding: 0.05rem 0.55rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.pill.high {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.pill.low {
+  color: var(--muted);
+}
+
+.due {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.due.overdue {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+li select,
+.card-task select {
+  width: auto;
+}
+
+.board {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.column {
+  min-height: 12rem;
+  padding: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.column.over {
+  border-color: var(--primary);
+  background: var(--bg);
+}
+
+.column h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.card-task {
+  margin-bottom: 0.5rem;
+  padding: 0.6rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: grab;
+}
+
+.card-task .meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  margin: 0.35rem 0;
+}
+
+.card-task .actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.card-task .actions button {
+  padding: 0.15rem 0.5rem;
+}
+
+.timer {
+  text-align: center;
+}
+
+.phase {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.clock {
+  margin: 0;
+  font: 700 4.5rem/1.1 var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.notes-layout {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: minmax(200px, 1fr) 2fr;
+  align-items: start;
+}
+
+@media (max-width: 700px) {
+  .notes-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .grid .wide {
+    grid-column: auto;
+  }
+}
+
+ul.notes-list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+}
+
+ul.notes-list button {
+  width: 100%;
+  margin-bottom: 0.3rem;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+ul.notes-list button[aria-current='true'] {
+  color: var(--primary-text);
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+details {
+  margin-top: 1rem;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 600;
+}

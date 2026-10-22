@@ -1,0 +1,132 @@
+/* PDF Fill & Sign - tool-specific styles. */
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  align-items: center;
+}
+
+.toolbar button[aria-pressed='true'] {
+  color: var(--primary-text);
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.viewer {
+  max-height: 80vh;
+  margin-bottom: var(--gap);
+  padding: 1rem;
+  overflow: auto;
+  background: #6b7280;
+  border-radius: var(--radius);
+}
+
+.page-stack {
+  position: relative;
+  margin: 0 auto;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.page-stack canvas {
+  display: block;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  cursor: default;
+}
+
+.overlay.placing {
+  cursor: crosshair;
+}
+
+.item {
+  position: absolute;
+  color: #000;
+  outline: 1px dashed transparent;
+}
+
+.item:hover,
+.item.selected {
+  outline-color: var(--primary);
+}
+
+.item.selected {
+  outline-style: solid;
+}
+
+.item .controls {
+  position: absolute;
+  top: -22px;
+  left: 0;
+  display: none;
+  gap: 2px;
+}
+
+.item.selected .controls,
+.item:hover .controls {
+  display: flex;
+}
+
+.item .controls button {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1;
+  color: #000;
+  background: #fff;
+  border: 1px solid #555;
+  border-radius: 4px;
+}
+
+.item .controls .move {
+  cursor: move;
+  touch-action: none;
+}
+
+.item input.text {
+  display: block;
+  min-width: 2ch;
+  margin: 0;
+  padding: 0;
+  font-family: Helvetica, Arial, sans-serif;
+  line-height: 1;
+  color: #000;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  outline: none;
+}
+
+.item.signature img,
+.item.check svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+}
+
+#sig-pad {
+  width: 100%;
+  max-width: 560px;
+  background: #fff;
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+#sig-pad.typed {
+  cursor: default;
+}
+
+.field-grid label {
+  font-weight: 600;
+}

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>Sheet Cleaner - clean, de-duplicate, compare Excel and CSV (offline)</title>
+    <meta
+      name="description"
+      content="Clean up Excel and CSV files, remove duplicates, compare two sheets and look up values. Runs in your browser; data never leaves your computer."
+    />
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="site">
+        <div>
+          <h1>Sheet Cleaner</h1>
+          <p>Tidy Excel/CSV data, spot differences, and look up values.</p>
+        </div>
+        <span class="badge">Works offline - your data never leaves this device</span>
+      </header>
+
+      <div class="tabs" role="tablist" id="tabs" aria-label="Sheet tools">
+        <button role="tab" id="tab-clean" aria-controls="panel-clean" aria-selected="true">Clean up one sheet</button>
+        <button role="tab" id="tab-compare" aria-controls="panel-compare">Compare / look up two sheets</button>
+      </div>
+
+      <template id="loader-tpl">
+        <label class="dropzone">
+          <span class="dz-text">Drop an Excel (.xlsx, .xls) or CSV file here, or click to choose</span>
+          <input type="file" accept=".xlsx,.xls,.xlsm,.csv,.tsv,.txt" />
+        </label>
+        <div class="row loader-meta" hidden>
+          <div>
+            <label class="sheet-label">Sheet</label>
+            <select class="sheet-select"></select>
+          </div>
+          <p class="loader-info hint"></p>
+        </div>
+      </template>
+
+      <section id="panel-clean" role="tabpanel" aria-labelledby="tab-clean">
+        <div class="card">
+          <h2>1. Open a file</h2>
+          <div id="clean-loader"></div>
+          <p class="status" id="clean-status" role="status"></p>
+        </div>
+
+        <div class="card" id="clean-tools" hidden>
+          <h2>2. Clean it</h2>
+          <fieldset class="quick">
+            <legend>Quick clean</legend>
+            <label class="inline"><input type="checkbox" id="q-trim" checked /> Trim spaces around text</label>
+            <label class="inline"><input type="checkbox" id="q-collapse" /> Squeeze double spaces inside text</label>
+            <label class="inline"><input type="checkbox" id="q-empty" checked /> Remove empty rows</label>
+            <label class="inline"><input type="checkbox" id="q-dupes" /> Remove duplicate rows (whole row)</label>
+            <button id="q-apply" class="primary">Apply quick clean</button>
+          </fieldset>
+
+          <fieldset class="column-tools">
+            <legend>Column tools</legend>
+            <div class="grid">
+              <div>
+                <label for="col-select">Column</label>
+                <select id="col-select"></select>
+              </div>
+              <div>
+                <label for="col-action">Action</label>
+                <select id="col-action">
+                  <option value="upper">UPPERCASE</option>
+                  <option value="lower">lowercase</option>
+                  <option value="title">Title Case</option>
+                  <option value="split">Split into columns at a character</option>
+                  <option value="replace">Find and replace</option>
+                  <option value="dedupe">Remove rows with a repeated value in this column</option>
+                  <option value="sort-asc">Sort A to Z / small to large</option>
+                  <option value="sort-desc">Sort Z to A / large to small</option>
+                  <option value="drop">Delete this column</option>
+                </select>
+              </div>
+              <div id="opt-split" hidden>
+                <label for="split-delim">Split at</label>
+                <input type="text" id="split-delim" value="," maxlength="10" />
+                <label class="inline"><input type="checkbox" id="split-keep" /> Keep original column</label>
+              </div>
+              <div id="opt-replace" hidden>
+                <label for="find-text">Find</label>
+                <input type="text" id="find-text" />
+                <label for="replace-text">Replace with</label>
+                <input type="text" id="replace-text" />
+                <label class="inline"><input type="checkbox" id="find-case" /> Match case</label>
+                <label class="inline"><input type="checkbox" id="find-whole" /> Whole cell only</label>
+                <label class="inline"><input type="checkbox" id="find-all" /> All columns</label>
+              </div>
+            </div>
+            <button id="col-apply" class="primary">Apply</button>
+          </fieldset>
+
+          <div class="row">
+            <button id="undo" disabled>Undo last step</button>
+            <button id="reset" disabled>Start over</button>
+          </div>
+          <ol class="log" id="log" aria-label="Steps applied"></ol>
+        </div>
+
+        <div class="card" id="clean-preview" hidden>
+          <h2>3. Preview and save</h2>
+          <p class="hint" id="preview-info"></p>
+          <div class="table-wrap" id="preview"></div>
+          <div class="row">
+            <button class="primary" id="save-xlsx">Download Excel (.xlsx)</button>
+            <button id="save-csv">Download CSV</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-compare" role="tabpanel" aria-labelledby="tab-compare" hidden>
+        <div class="grid">
+          <div class="card">
+            <h2>Sheet A (e.g. old list)</h2>
+            <div id="a-loader"></div>
+            <label for="a-key">Key column (unique ID)</label>
+            <select id="a-key" disabled></select>
+          </div>
+          <div class="card">
+            <h2>Sheet B (e.g. new list)</h2>
+            <div id="b-loader"></div>
+            <label for="b-key">Key column (unique ID)</label>
+            <select id="b-key" disabled></select>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>What do you want to do?</h2>
+          <div class="row">
+            <button class="primary" id="do-compare" disabled>Compare A and B</button>
+          </div>
+          <p class="hint">Shows rows only in A, only in B, and rows whose values changed (columns with the same name are compared).</p>
+          <hr />
+          <fieldset>
+            <legend>Look up: add columns from B to A (like VLOOKUP)</legend>
+            <div id="lookup-cols" class="row" aria-label="Columns from B"></div>
+            <button id="do-lookup" disabled>Add selected columns and download</button>
+          </fieldset>
+          <p class="status" id="cmp-status" role="status"></p>
+        </div>
+
+        <div class="card" id="cmp-results" hidden>
+          <h2>Comparison result</h2>
+          <p id="cmp-summary"></p>
+          <div class="table-wrap" id="cmp-preview"></div>
+          <div class="row">
+            <button class="primary" id="cmp-save">Download full report (.xlsx)</button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site">
+        <a href="../../index.html">All tools</a> - MIT licensed - spreadsheet engine: <a href="vendor/README.md">SheetJS</a>
+      </footer>
+    </main>
+
+    <script src="vendor/xlsx.full.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
