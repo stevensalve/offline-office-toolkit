@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>Text Toolkit - case, word count, clean lines, find &amp; replace, compare (offline)</title>
+    <meta
+      name="description"
+      content="Change text case, count words, clean up lists, find and replace, compare two texts and extract e-mails or links. Runs in your browser."
+    />
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="site">
+        <div>
+          <h1>Text Toolkit</h1>
+          <p>Everyday text jobs, done privately in your browser.</p>
+        </div>
+        <span class="badge">Works offline - nothing is uploaded</span>
+      </header>
+
+      <div class="tabs" role="tablist" id="tabs" aria-label="Text tools">
+        <button role="tab" id="tab-case" aria-controls="panel-case" aria-selected="true">Change case</button>
+        <button role="tab" id="tab-count" aria-controls="panel-count">Word count</button>
+        <button role="tab" id="tab-lines" aria-controls="panel-lines">Clean up lines</button>
+        <button role="tab" id="tab-replace" aria-controls="panel-replace">Find &amp; replace</button>
+        <button role="tab" id="tab-diff" aria-controls="panel-diff">Compare texts</button>
+        <button role="tab" id="tab-extract" aria-controls="panel-extract">Extract</button>
+      </div>
+
+      <section id="panel-case" role="tabpanel" aria-labelledby="tab-case" class="card stack">
+        <div>
+          <label for="case-in">Your text</label>
+          <textarea id="case-in" rows="6" placeholder="Type or paste text here"></textarea>
+        </div>
+        <div class="row" id="case-buttons" role="group" aria-label="Case styles"></div>
+        <div>
+          <label for="case-out">Result</label>
+          <textarea id="case-out" rows="6" readonly></textarea>
+        </div>
+        <div class="row"><button class="copy" data-target="case-out">Copy result</button></div>
+      </section>
+
+      <section id="panel-count" role="tabpanel" aria-labelledby="tab-count" class="card stack" hidden>
+        <div>
+          <label for="count-in">Your text</label>
+          <textarea id="count-in" rows="8" placeholder="Type or paste text here"></textarea>
+        </div>
+        <dl class="stats" id="count-stats"></dl>
+      </section>
+
+      <section id="panel-lines" role="tabpanel" aria-labelledby="tab-lines" class="card stack" hidden>
+        <div>
+          <label for="lines-in">One item per line</label>
+          <textarea id="lines-in" rows="8" placeholder="Paste a list: names, e-mails, product codes..."></textarea>
+        </div>
+        <fieldset>
+          <legend>Clean-up steps</legend>
+          <label class="inline"><input type="checkbox" id="l-trim" checked /> Trim spaces</label>
+          <label class="inline"><input type="checkbox" id="l-collapse" /> Squeeze repeated spaces</label>
+          <label class="inline"><input type="checkbox" id="l-empty" checked /> Remove blank lines</label>
+          <label class="inline"><input type="checkbox" id="l-dedupe" checked /> Remove duplicates</label>
+          <label class="inline"><input type="checkbox" id="l-reverse" /> Reverse order</label>
+          <label class="inline"><input type="checkbox" id="l-number" /> Number the lines</label>
+          <label class="inline">
+            Sort
+            <select id="l-sort">
+              <option value="none">No sorting</option>
+              <option value="asc">A to Z</option>
+              <option value="desc">Z to A</option>
+            </select>
+          </label>
+        </fieldset>
+        <div>
+          <label for="lines-out">Result <span class="hint" id="lines-info"></span></label>
+          <textarea id="lines-out" rows="8" readonly></textarea>
+        </div>
+        <div class="row"><button class="copy" data-target="lines-out">Copy result</button></div>
+      </section>
+
+      <section id="panel-replace" role="tabpanel" aria-labelledby="tab-replace" class="card stack" hidden>
+        <div>
+          <label for="rep-in">Your text</label>
+          <textarea id="rep-in" rows="7"></textarea>
+        </div>
+        <div class="grid">
+          <div><label for="rep-find">Find</label><input type="text" id="rep-find" /></div>
+          <div><label for="rep-with">Replace with</label><input type="text" id="rep-with" /></div>
+        </div>
+        <div class="row">
+          <label class="inline"><input type="checkbox" id="rep-case" /> Match case</label>
+          <label class="inline"><input type="checkbox" id="rep-word" /> Whole words only</label>
+          <label class="inline"><input type="checkbox" id="rep-regex" /> Pattern (regular expression)</label>
+        </div>
+        <div class="row"><button class="primary" id="rep-run">Replace all</button></div>
+        <p class="status" id="rep-status" role="status"></p>
+        <div>
+          <label for="rep-out">Result</label>
+          <textarea id="rep-out" rows="7" readonly></textarea>
+        </div>
+        <div class="row"><button class="copy" data-target="rep-out">Copy result</button></div>
+      </section>
+
+      <section id="panel-diff" role="tabpanel" aria-labelledby="tab-diff" class="card stack" hidden>
+        <div class="grid two">
+          <div><label for="diff-a">Original</label><textarea id="diff-a" rows="8"></textarea></div>
+          <div><label for="diff-b">Changed</label><textarea id="diff-b" rows="8"></textarea></div>
+        </div>
+        <div class="row">
+          <label class="inline"><input type="checkbox" id="diff-case" /> Ignore capital letters</label>
+          <label class="inline"><input type="checkbox" id="diff-space" /> Ignore extra spaces</label>
+          <button class="primary" id="diff-run">Compare</button>
+        </div>
+        <p class="status" id="diff-status" role="status"></p>
+        <div class="diff" id="diff-out" aria-label="Differences"></div>
+      </section>
+
+      <section id="panel-extract" role="tabpanel" aria-labelledby="tab-extract" class="card stack" hidden>
+        <div>
+          <label for="ext-in">Paste any text (an e-mail, a web page, a report)</label>
+          <textarea id="ext-in" rows="8"></textarea>
+        </div>
+        <div>
+          <label for="ext-type">Pull out</label>
+          <select id="ext-type">
+            <option value="emails">E-mail addresses</option>
+            <option value="urls">Web links</option>
+            <option value="numbers">Numbers</option>
+          </select>
+        </div>
+        <div>
+          <label for="ext-out">Found <span class="hint" id="ext-info"></span></label>
+          <textarea id="ext-out" rows="6" readonly></textarea>
+        </div>
+        <div class="row"><button class="copy" data-target="ext-out">Copy result</button></div>
+      </section>
+
+      <footer class="site"><a href="../../index.html">All tools</a> - MIT licensed - no third-party libraries</footer>
+    </main>
+
+    <script src="js/common.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

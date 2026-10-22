@@ -1,0 +1,69 @@
+/* Text Toolkit - tool-specific styles. */
+.stats {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.stats div {
+  padding: 0.75rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.stats dt {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.stats dd {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.grid.two {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+fieldset {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+fieldset label.inline {
+  margin-right: 1rem;
+}
+
+.diff {
+  max-height: 24rem;
+  overflow: auto;
+  font: 0.85rem/1.5 var(--mono);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.diff div {
+  padding: 0 0.6rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Symbols (+/-) as well as colour, so the diff is readable without colour vision. */
+.diff .add {
+  background: rgba(27, 127, 59, 0.18);
+}
+
+.diff .del {
+  background: rgba(179, 38, 30, 0.18);
+}
+
+.diff .sym {
+  display: inline-block;
+  width: 1.2rem;
+  font-weight: 700;
+}
