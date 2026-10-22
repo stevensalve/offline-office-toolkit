@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>Document Generator - invoice, receipt and letter to PDF (offline)</title>
+    <meta
+      name="description"
+      content="Create invoices, receipts and business letters as PDF files. Runs in your browser; nothing is uploaded."
+    />
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="site">
+        <div>
+          <h1>Document Generator</h1>
+          <p>Invoices, receipts and letters as clean PDFs.</p>
+        </div>
+        <span class="badge">Works offline - nothing is uploaded</span>
+      </header>
+
+      <div class="tabs" role="tablist" id="tabs" aria-label="Document type">
+        <button role="tab" id="tab-invoice" aria-controls="panel-invoice" aria-selected="true">Invoice / receipt</button>
+        <button role="tab" id="tab-letter" aria-controls="panel-letter">Letter</button>
+      </div>
+
+      <section id="panel-invoice" role="tabpanel" aria-labelledby="tab-invoice">
+        <div class="card">
+          <h2>Document</h2>
+          <div class="grid">
+            <div>
+              <label for="inv-kind">Type</label>
+              <select id="inv-kind">
+                <option value="invoice">Invoice</option>
+                <option value="receipt">Receipt</option>
+              </select>
+            </div>
+            <div><label for="inv-number">Number</label><input type="text" id="inv-number" /></div>
+            <div><label for="inv-date">Date</label><input type="date" id="inv-date" /></div>
+            <div id="due-box"><label for="inv-due">Due date (optional)</label><input type="date" id="inv-due" /></div>
+            <div>
+              <label for="inv-currency">Currency</label>
+              <select id="inv-currency">
+                <option value="&#8377;">Rupee (Rs.)</option>
+                <option value="$">Dollar ($)</option>
+                <option value="&#8364;">Euro (&#8364;)</option>
+                <option value="&#163;">Pound (&#163;)</option>
+                <option value="AED">Dirham (AED)</option>
+              </select>
+            </div>
+            <div>
+              <label for="inv-locale">Number format</label>
+              <select id="inv-locale">
+                <option value="en-IN">12,34,567.00</option>
+                <option value="en-US">1,234,567.00</option>
+                <option value="de-DE">1.234.567,00</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid two">
+          <div class="card stack">
+            <h2>From (you)</h2>
+            <div><label for="s-name">Business name</label><input type="text" id="s-name" autocomplete="organization" /></div>
+            <div><label for="s-address">Address</label><textarea id="s-address" rows="3"></textarea></div>
+            <div><label for="s-tax">Tax ID / GSTIN (optional)</label><input type="text" id="s-tax" /></div>
+            <div><label for="s-contact">E-mail / phone (optional)</label><input type="text" id="s-contact" /></div>
+            <div>
+              <label for="s-logo">Logo (optional, PNG or JPG)</label>
+              <input type="file" id="s-logo" accept="image/png,image/jpeg" />
+              <button type="button" id="logo-clear" hidden>Remove logo</button>
+            </div>
+          </div>
+          <div class="card stack">
+            <h2 id="to-title">Bill to</h2>
+            <div><label for="c-name">Client name</label><input type="text" id="c-name" /></div>
+            <div><label for="c-address">Address</label><textarea id="c-address" rows="3"></textarea></div>
+            <div><label for="c-tax">Tax ID / GSTIN (optional)</label><input type="text" id="c-tax" /></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Items</h2>
+          <div class="table-wrap">
+            <table id="items">
+              <thead>
+                <tr>
+                  <th scope="col">Description</th>
+                  <th scope="col" class="num">Qty</th>
+                  <th scope="col" class="num">Rate</th>
+                  <th scope="col" class="num">Tax %</th>
+                  <th scope="col" class="num">Amount</th>
+                  <th scope="col"><span class="visually-hidden">Remove</span></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="row"><button id="add-item" type="button">Add item</button></div>
+          <div class="grid two">
+            <div>
+              <label for="inv-discount">Discount on all items (%)</label
+              ><input type="number" id="inv-discount" min="0" max="100" step="any" value="0" />
+            </div>
+            <dl class="totals" id="totals" aria-live="polite"></dl>
+          </div>
+        </div>
+
+        <div class="card stack">
+          <h2>Extras</h2>
+          <div id="method-box">
+            <label for="inv-method">Paid by (receipts)</label
+            ><input type="text" id="inv-method" placeholder="Cash, UPI, bank transfer..." />
+          </div>
+          <div>
+            <label for="inv-payment">Payment details (bank account, UPI id...)</label><textarea id="inv-payment" rows="3"></textarea>
+          </div>
+          <div><label for="inv-notes">Notes / terms</label><textarea id="inv-notes" rows="3"></textarea></div>
+        </div>
+
+        <div class="card">
+          <div class="row">
+            <button class="primary" id="inv-pdf">Download PDF</button>
+            <button id="inv-next" type="button">Start next document (keep my details)</button>
+            <button id="inv-save" type="button">Save draft file</button>
+            <label class="button" for="inv-load">Open draft file</label>
+            <input type="file" id="inv-load" accept=".json,application/json" class="visually-hidden" />
+          </div>
+          <p class="status" id="inv-status" role="status"></p>
+          <p class="hint">
+            Your work is also kept in this browser automatically. Standard PDF fonts cover English and Western European letters; the rupee
+            sign prints as "Rs.".
+          </p>
+        </div>
+      </section>
+
+      <section id="panel-letter" role="tabpanel" aria-labelledby="tab-letter" hidden>
+        <div class="grid two">
+          <div class="card stack">
+            <h2>From</h2>
+            <div><label for="l-sname">Your name</label><input type="text" id="l-sname" /></div>
+            <div><label for="l-saddr">Your address</label><textarea id="l-saddr" rows="3"></textarea></div>
+            <div><label for="l-date">Date</label><input type="text" id="l-date" /></div>
+          </div>
+          <div class="card stack">
+            <h2>To</h2>
+            <div><label for="l-rname">Recipient name</label><input type="text" id="l-rname" /></div>
+            <div><label for="l-raddr">Recipient address</label><textarea id="l-raddr" rows="3"></textarea></div>
+          </div>
+        </div>
+        <div class="card stack">
+          <div><label for="l-subject">Subject</label><input type="text" id="l-subject" /></div>
+          <div><label for="l-salute">Greeting (optional)</label><input type="text" id="l-salute" placeholder="Dear Sir/Madam," /></div>
+          <div><label for="l-body">Letter</label><textarea id="l-body" rows="10"></textarea></div>
+          <div><label for="l-closing">Closing</label><input type="text" id="l-closing" value="Sincerely," /></div>
+          <div class="row"><button class="primary" id="l-pdf">Download PDF</button></div>
+          <p class="status" id="l-status" role="status"></p>
+        </div>
+      </section>
+
+      <footer class="site"><a href="../../index.html">All tools</a> - MIT licensed - PDFs by <a href="vendor/README.md">pdf-lib</a></footer>
+    </main>
+
+    <script src="vendor/pdf-lib.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/pdf.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

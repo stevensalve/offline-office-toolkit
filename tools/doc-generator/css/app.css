@@ -1,0 +1,44 @@
+/* Document Generator - tool-specific styles. */
+.grid.two {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+#items input {
+  min-width: 4.5rem;
+}
+
+#items td:first-child input {
+  min-width: 14rem;
+}
+
+#items td.amount {
+  white-space: nowrap;
+  padding-top: 0.75rem;
+}
+
+dl.totals {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.2rem 1rem;
+  align-self: end;
+  margin: 0;
+}
+
+dl.totals dt {
+  color: var(--muted);
+}
+
+dl.totals dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+dl.totals .grand {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.visually-hidden:focus + * {
+  outline: 3px solid var(--focus);
+}
